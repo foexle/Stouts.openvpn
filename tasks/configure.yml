@@ -92,3 +92,12 @@
 
 - name: Set ip forwarding in the sysctl file and reload if necessary
   sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+
+- name: Create nat rules for client traffig throught VPN
+  iptables:
+    chain: POSTROUTING
+    source: 10.8.0.0/24
+    table: nat
+    out_interface: eth0
+    jump: MASQUERADE
+  when: openvpn_forward_client_traffic is defined and openvpn_forward_client_traffic
